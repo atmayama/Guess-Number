@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-void main() => runApp(GuessNumberApp());
+void main() {
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  runApp(GuessNumberApp());
+}
 
 class GuessNumberApp extends StatelessWidget {
   final Map<String, WidgetBuilder> _routes = {
