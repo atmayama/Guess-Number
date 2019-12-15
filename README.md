@@ -18,11 +18,4 @@ perfect means how many numbers are correct and in place
 ### --------------------------------------------------------------------------------------------------------------------
 
 
-## ScreenShots
-
-### Player 1
-![ Player 1 ]( ./images/Player1.png )
-### Player 2
-![ Player 2 ]( ./images/Player2.png )
-### Rules
-![ Rules ]( ./images/Rules.png )
+## ScreenShots is in gen folder
