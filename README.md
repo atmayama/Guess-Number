@@ -13,6 +13,12 @@ Perfect and Correct
 correct means how many you digits in number guessed are in the generated number
 perfect means how many numbers are correct and in place
 
-### --------------------------------------------------------------------------------------------------------------------
+###
 [Download APK](./APKs/apk.apk)
-### --------------------------------------------------------------------------------------------------------------------
+###
+
+<img src="Screenshots/flutter_05.png" height=500 />
+<img src="Screenshots/flutter_01.png" height=500 />
+<img src="Screenshots/flutter_02.png" height=500 />
+<img src="Screenshots/flutter_03.png" height=500 />
+<img src="Screenshots/flutter_04.png" height=500 />
