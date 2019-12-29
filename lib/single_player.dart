@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:guess_number/main.dart';
 
@@ -77,6 +78,8 @@ class _SinglePlayerGameScreenState extends State<SinglePlayerGameScreen> {
                             borderRadius:
                                 BorderRadius.all(Radius.circular(12.0))),
                         child: ListView(
+                          dragStartBehavior: DragStartBehavior.down,
+                          physics: BouncingScrollPhysics(),
                           padding: EdgeInsets.all(25.0),
                           shrinkWrap: true,
                           children: <Widget>[
@@ -111,209 +114,214 @@ class _SinglePlayerGameScreenState extends State<SinglePlayerGameScreen> {
         decoration: BoxDecoration(color: background),
         child: Column(
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: numbers.map((number) {
-                return Container(
-                  width: 70,
-                  height: 70,
-                  padding: EdgeInsets.all(20.0),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                      border:
-                          Border.all(color: widget.colorSelection, width: 2)),
-                  child: Center(
-                    child: Text(
-                      number == null ? "  " : number.toString(),
-                      style:
-                          TextStyle(color: widget.colorSelection, fontSize: 20),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: Text(
-                message,
-                style: TextStyle(color: widget.colorSelection),
-              ),
-            ),
+            inputBox(),
+            messageBox(),
             Spacer(),
-            GridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 5,
-              children: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((number) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (ind < 4) {
-                        numbers[ind++] = number;
-                      } else {
-                        ind = 1;
-                        numbers = [number, null, null, null];
-                      }
-                    });
-                  },
-                  child: Container(
-                    margin: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                        border: Border.all(color: widget.colorSelection)),
-                    child: Center(
-                        child: Text(
-                      number.toString(),
-                      style:
-                          TextStyle(color: widget.colorSelection, fontSize: 25),
-                    )),
-                  ),
-                );
-              }).toList(),
-            ),
-            Row(
-              children: <Widget>[
-                IconButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) {
-                      return SelectionScreen(
-                        background: widget.colorSelection,
-                      );
-                    }));
-                  },
-                  icon: Icon(
-                    Icons.exit_to_app,
-                    color: widget.colorSelection,
-                  ),
-                ),
-                Expanded(
-                  child: ButtonBar(
-                    children: <Widget>[
-                      IconButton(
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: widget.colorSelection,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              if (ind > 0) {
-                                numbers[--ind] = null;
-                              }
-                            });
-                          }),
-                      OutlineButton(
-                        highlightedBorderColor: widget.colorSelection,
-                        child: Text(
-                          "Check",
-                          style: TextStyle(color: widget.colorSelection),
-                        ),
-                        onPressed: () {
-                          if (ind != 4) {
-                            setState(() {
-                              message = "Enter 4 Digits";
-                            });
-                            return;
-                          }
-                          int perfectNumbers = 0;
-                          for (var i = 0; i < 4; ++i) {
-                            if (setNumber[i] == numbers[i]) {
-                              perfectNumbers++;
-                            }
-                          }
-                          if (perfectNumbers == 4) {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return Dialog(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(12.0))),
-                                    child: Container(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.all(25.0),
-                                            child: Text(
-                                              "You Won",
-                                              style: TextStyle(
-                                                  fontSize: 30,
-                                                  color: widget.colorSelection),
-                                            ),
-                                          ),
-                                          ButtonBar(
-                                            children: <Widget>[
-                                              FlatButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                    Navigator.pushReplacement(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) {
-                                                      return SelectionScreen(
-                                                        background: widget
-                                                            .colorSelection,
-                                                      );
-                                                    }));
-                                                  },
-                                                  child: Text(
-                                                    "EXIT",
-                                                    style: TextStyle(
-                                                        color: widget
-                                                            .colorSelection),
-                                                  )),
-                                              RaisedButton(
-                                                color: widget.colorSelection,
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                  numbers = [
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    null
-                                                  ];
-                                                  ind = 0;
-                                                  _setNumber();
-                                                },
-                                                child: Text(
-                                                  "RETRY",
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                              )
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                });
-                            return;
-                          }
-                          int correctNumbers = 0;
-                          List<int> temp = List.from(numbers);
-                          for (var i = 0; i < 4; ++i) {
-                            if (temp.contains(setNumber[i])) {
-                              correctNumbers++;
-                              temp.remove(setNumber[i]);
-                            }
-                          }
-                          setState(() {
-                            message =
-                                "Perfect Numbers = $perfectNumbers  |  Correct Numbers = $correctNumbers";
-                          });
-                        },
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            )
+            keyboard(),
+            controlBar(context)
           ],
         ),
       ),
+    );
+  }
+
+  Row inputBox() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: numbers.map((number) {
+        return Container(
+          width: 70,
+          height: 70,
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(12.0)),
+              border: Border.all(color: widget.colorSelection, width: 2)),
+          child: Center(
+            child: Text(
+              number == null ? "  " : number.toString(),
+              style: TextStyle(color: widget.colorSelection, fontSize: 20),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Padding messageBox() {
+    return Padding(
+      padding: const EdgeInsets.all(25.0),
+      child: Text(
+        message,
+        style: TextStyle(color: widget.colorSelection),
+      ),
+    );
+  }
+
+  GridView keyboard() {
+    return GridView.count(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      crossAxisCount: 5,
+      children: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((number) {
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              if (ind < 4) {
+                numbers[ind++] = number;
+              } else {
+                ind = 1;
+                numbers = [number, null, null, null];
+              }
+            });
+          },
+          child: Container(
+            margin: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                border: Border.all(color: widget.colorSelection)),
+            child: Center(
+                child: Text(
+              number.toString(),
+              style: TextStyle(color: widget.colorSelection, fontSize: 25),
+            )),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Row controlBar(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        IconButton(
+          onPressed: () {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) {
+              return SelectionScreen(
+                background: widget.colorSelection,
+              );
+            }));
+          },
+          icon: Icon(
+            Icons.exit_to_app,
+            color: widget.colorSelection,
+          ),
+        ),
+        Expanded(
+          child: ButtonBar(
+            children: <Widget>[
+              IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: widget.colorSelection,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (ind > 0) {
+                        numbers[--ind] = null;
+                      }
+                    });
+                  }),
+              OutlineButton(
+                highlightedBorderColor: widget.colorSelection,
+                child: Text(
+                  "Check",
+                  style: TextStyle(color: widget.colorSelection),
+                ),
+                onPressed: () {
+                  if (ind != 4) {
+                    setState(() {
+                      message = "Enter 4 Digits";
+                    });
+                    return;
+                  }
+                  int perfectNumbers = 0;
+                  for (var i = 0; i < 4; ++i) {
+                    if (setNumber[i] == numbers[i]) {
+                      perfectNumbers++;
+                    }
+                  }
+                  if (perfectNumbers == 4) {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Dialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12.0))),
+                            child: Container(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(25.0),
+                                    child: Text(
+                                      "You Won",
+                                      style: TextStyle(
+                                          fontSize: 30,
+                                          color: widget.colorSelection),
+                                    ),
+                                  ),
+                                  ButtonBar(
+                                    children: <Widget>[
+                                      FlatButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            Navigator.pushReplacement(context,
+                                                MaterialPageRoute(
+                                                    builder: (context) {
+                                              return SelectionScreen(
+                                                background:
+                                                    widget.colorSelection,
+                                              );
+                                            }));
+                                          },
+                                          child: Text(
+                                            "EXIT",
+                                            style: TextStyle(
+                                                color: widget.colorSelection),
+                                          )),
+                                      RaisedButton(
+                                        color: widget.colorSelection,
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          numbers = [null, null, null, null];
+                                          ind = 0;
+                                          _setNumber();
+                                        },
+                                        child: Text(
+                                          "RETRY",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        });
+                    return;
+                  }
+                  int correctNumbers = 0;
+                  List<int> temp = List.from(numbers);
+                  for (var i = 0; i < 4; ++i) {
+                    if (temp.contains(setNumber[i])) {
+                      correctNumbers++;
+                      temp.remove(setNumber[i]);
+                    }
+                  }
+                  setState(() {
+                    message =
+                        "Perfect Numbers = $perfectNumbers  |  Correct Numbers = $correctNumbers";
+                  });
+                },
+              )
+            ],
+          ),
+        ),
+      ],
     );
   }
 
